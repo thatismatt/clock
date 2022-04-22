@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clock</title>
+    <style type="text/css" media="screen">
+      body {
+        background: black;
+      }
+
+      #container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        color: #fff;
+        font-size: 60px;
+        font-family: Inconsolata;
+        text-align: center;
+        width: 100%;
+      }
+
+      #timer {
+      }
+
+      .loop {
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="clock"></div>
+      <div id="timer"></div>
+    </div>
+    <script type="text/javascript">
+      var beeper = new Audio("a6-sine-750ms.mp3")
+      var clock = document.getElementById("clock");
+      var timer = document.getElementById("timer");
+      var start = Math.floor(+(new Date()) / 1000);
+      var loop = 60;
+      var lastBeep = null;
+
+      function showTime () {
+        var date = new Date();
+        var h = date.getHours(); // 0 - 23
+        var m = date.getMinutes(); // 0 - 59
+        var s = date.getSeconds(); // 0 - 59
+
+        var ht = (h < 10) ? "0" + h : h;
+        var mt = (m < 10) ? "0" + m : m;
+        var st = (s < 10) ? "0" + s : s;
+
+        clock.innerText = ht + ":" + mt + ":" + st + " ";
+        var elapsed = Math.floor(+date / 1000) - start;
+        var loopElapsed = elapsed % loop;
+        timer.innerHTML = loopElapsed + "<span class='loop'> / " + loop + "</span>";
+        if (loopElapsed === 0 && elapsed !== lastBeep) {
+          lastBeep = elapsed;
+          beeper.play();
+        }
+        setTimeout(showTime, 1000);
+      }
+
+      showTime();
+      document.onkeydown = function (e) {
+        if (e.key == "ArrowUp") {
+          loop += 5;
+          showTime();
+        }
+        if (e.key == "ArrowDown") {
+          loop = Math.max(5, loop - 5);
+          showTime();
+        }
+        if (e.key == " ") {
+          start = Math.floor(+(new Date()) / 1000);
+          showTime();
+        }
+        if (e.key == "Escape") {
+          if (timer.style.display == "none") {
+            timer.style.display = "";
+          } else {
+            timer.style.display = "none";
+          }
+        }
+      }
+      </script>
+  </body>
+</html>
